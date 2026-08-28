@@ -1,0 +1,30 @@
+# Maritim Nusa Dewata International — SIM LPK
+# Paste stack ini di Portainer (Stacks → Add stack).
+#
+# Image dibangun otomatis oleh GitHub Actions lalu di-push ke GHCR.
+# Port host 3010 dipilih agar tidak bentrok dengan layanan yang sudah ada:
+# 3001–3004, 3080, 5001, 8080–8086, 9443 (Portainer).
+#
+# Di Cloudflare Tunnel / reverse proxy, tambahkan hostname:
+#   lpk.surcamp.my.id  →  http://localhost:3010
+#
+# Jika repo GitHub private, daftarkan registry di Portainer:
+#   Registry URL : ghcr.io
+#   Username     : GitHub username
+#   Password     : Personal Access Token (read:packages)
+
+services:
+  lpk-web:
+    image: ghcr.io/igedesurya/lpk:latest
+    container_name: lpk-web
+    restart: unless-stopped
+    pull_policy: always
+    ports:
+      - "3010:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "traefik.enable=false"

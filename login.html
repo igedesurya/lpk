@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masuk Portal — Maritim Nusa Dewata International</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-visual">
+      <div>
+        <a href="index.html"><img src="assets/logo.jpg" alt="Logo" /></a>
+        <h1>Portal SIM Lembaga Kursus</h1>
+        <p>Masuk sesuai peran Anda. Menu yang tampil hanya untuk hak akses tersebut — mahasiswa tidak melihat menu admin, dan sebaliknya.</p>
+      </div>
+      <p>Maritim Nusa Dewata International · Nusa Dua, Bali</p>
+    </div>
+    <div class="auth-panel">
+      <form class="auth-box" id="loginForm">
+        <a href="index.html" style="color:var(--royal);font-size:13px;font-weight:700">← Kembali ke beranda</a>
+        <h2>Masuk ke portal</h2>
+        <p class="sub">Untuk demo wireframe, pilih peran di bawah atau isi akun contoh.</p>
+        <label>Email / NIM</label>
+        <input id="user" placeholder="contoh: mahasiswa@mndi.ac.id" />
+        <label>Kata sandi</label>
+        <input id="pass" type="password" placeholder="password" />
+        <button class="btn btn-primary" type="submit">Masuk</button>
+        <p style="margin-top:12px;font-size:13px">Belum punya akun? <a href="daftar.html" style="color:var(--royal);font-weight:700">Daftar online</a></p>
+        <p style="margin-top:18px;font-size:12px;font-weight:800;color:var(--muted)">ATAU LIHAT WIREFRAME SEBAGAI</p>
+        <div class="role-grid" id="roles"></div>
+      </form>
+    </div>
+  </div>
+  <script>
+    const ROLES = [
+      ["mahasiswa", "Mahasiswa", "KRS, nilai, tagihan"],
+      ["instruktur", "Instruktur", "Presensi & nilai"],
+      ["kepala-program", "Kepala Program", "Approval nilai"],
+      ["admin-cabang", "Admin Cabang", "Peserta & jadwal"],
+      ["admin-keuangan", "Admin Keuangan", "SPP & laporan"],
+      ["super-admin", "Super Admin", "Cabang & user"]
+    ];
+    const box = document.getElementById("roles");
+    const params = new URLSearchParams(location.search);
+    const pre = params.get("role");
+    ROLES.forEach(([id, name, desc]) => {
+      const a = document.createElement("a");
+      a.className = "role-chip" + (pre === id ? " active" : "");
+      a.href = "portal/" + id + ".html";
+      a.innerHTML = name + "<small>" + desc + "</small>";
+      box.appendChild(a);
+    });
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const u = (document.getElementById("user").value || "").toLowerCase();
+      const map = {
+        mahasiswa: "mahasiswa",
+        instruktur: "instruktur",
+        kaprodi: "kepala-program",
+        "kepala-program": "kepala-program",
+        admin: "admin-cabang",
+        "admin-cabang": "admin-cabang",
+        keuangan: "admin-keuangan",
+        "admin-keuangan": "admin-keuangan",
+        superadmin: "super-admin",
+        "super-admin": "super-admin"
+      };
+      const key = Object.keys(map).find((k) => u.includes(k)) || pre || "mahasiswa";
+      location.href = "portal/" + map[key] + ".html";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pendaftaran Online — Maritim Nusa Dewata International</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-visual">
+      <div>
+        <a href="index.html"><img src="assets/logo.jpg" alt="Logo" /></a>
+        <h1>Pendaftaran peserta baru</h1>
+        <p>Unggah KTP, ijazah, dan foto. Admin cabang akan meninjau dan menempatkan Anda ke jurusan serta gelombang pelatihan.</p>
+      </div>
+      <p>Program: Bahasa Inggris · Housekeeping · F&amp;B Service · Bar · Cook</p>
+    </div>
+    <div class="auth-panel">
+      <form class="auth-box" id="regForm" style="width:min(560px,100%)">
+        <a href="index.html" style="color:var(--royal);font-size:13px;font-weight:700">← Kembali ke beranda</a>
+        <h2>Formulir pendaftaran</h2>
+        <p class="sub">Status awal: calon peserta. Login dibuka setelah disetujui.</p>
+        <div class="form-grid">
+          <div><label>Nama lengkap</label><input required placeholder="Nama sesuai KTP" /></div>
+          <div><label>NIK</label><input required placeholder="16 digit" /></div>
+          <div><label>Email</label><input type="email" required placeholder="email@contoh.com" /></div>
+          <div><label>No. HP / WhatsApp</label><input required placeholder="08xxxxxxxxxx" /></div>
+          <div><label>Program / jurusan</label>
+            <select required>
+              <option>Bahasa Inggris</option>
+              <option>Housekeeping</option>
+              <option>F&amp;B Service</option>
+              <option>Bar</option>
+              <option>Cook</option>
+            </select>
+          </div>
+          <div><label>Gelombang</label>
+            <select><option>Gelombang 1 — Sep 2026</option><option>Gelombang 2 — Jan 2027</option></select>
+          </div>
+          <div class="span-2"><label>Alamat</label><textarea rows="2" placeholder="Alamat lengkap"></textarea></div>
+          <div><label>Foto (3x4)</label><input type="file" /></div>
+          <div><label>KTP</label><input type="file" /></div>
+          <div class="span-2"><label>Ijazah terakhir</label><input type="file" /></div>
+        </div>
+        <button class="btn btn-primary" type="submit">Kirim pendaftaran</button>
+        <p style="margin-top:12px;font-size:13px">Sudah punya akun? <a href="login.html" style="color:var(--royal);font-weight:700">Masuk</a></p>
+      </form>
+    </div>
+  </div>
+  <script>
+    document.getElementById("regForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      alert("Pendaftaran terkirim. Status Anda: calon peserta. Admin cabang akan meninjau dokumen.");
+      location.href = "login.html?role=mahasiswa";
+    });
+  </script>
+</body>
+</html>
