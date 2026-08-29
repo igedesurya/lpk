@@ -104,7 +104,14 @@
     return `<div class="card kpi"><span>${title}</span><b>${value}</b><span>${note || ""}</span></div>`;
   }
   function table(headers, rows) {
-    return `<div class="card" style="overflow:auto"><table class="table"><thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table></div>`;
+    const labeled = rows.map((row) => {
+      let i = 0;
+      return row.replace(/<td\b([^>]*)>/g, (_, attrs) => {
+        const label = headers[i++] || "";
+        return `<td${attrs} data-label="${label}">`;
+      });
+    });
+    return `<div class="card table-wrap"><table class="table"><thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${labeled.join("")}</tbody></table></div>`;
   }
   function actions(items) {
     return `<div class="row-actions">${items}</div>`;
@@ -555,12 +562,17 @@
   function render() {
     const page = pageFromHash();
     const html = pages[role][page]();
+    const pageLabel = cfg.menus.find((m) => m[0] === page)?.[1] || page;
     root.innerHTML = `
       <div class="app">
-        <aside class="sidebar">
-          <div class="side-brand">
-            <img src="../assets/logo.jpg" alt="" />
-            <div><strong>Maritim Nusa Dewata</strong><small>International</small></div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <aside class="sidebar" id="sidebar">
+          <div class="side-head">
+            <div class="side-brand">
+              <img src="../assets/logo.jpg" alt="" />
+              <div><strong>Maritim Nusa Dewata</strong><small>International</small></div>
+            </div>
+            <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Tutup menu">×</button>
           </div>
           <div class="role-badge">${cfg.label}</div>
           ${cfg.menus.map(([id, label]) => `<a class="nav-item ${id === page ? "active" : ""}" href="#${id}">${label}</a>`).join("")}
@@ -571,9 +583,14 @@
         </aside>
         <section class="main">
           <header class="topbar">
-            <div class="crumbs">SIM LPK / <b>${cfg.menus.find((m) => m[0] === page)?.[1] || page}</b></div>
+            <div class="top-left">
+              <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu" aria-controls="sidebar" aria-expanded="false">
+                <span></span><span></span><span></span>
+              </button>
+              <div class="crumbs">SIM LPK / <b>${pageLabel}</b></div>
+            </div>
             <div class="top-actions">
-              <button class="bell" id="bellBtn" title="Notifikasi">N<span class="dot"></span></button>
+              <button class="bell" id="bellBtn" type="button" title="Notifikasi">N<span class="dot"></span></button>
               <div class="avatar" title="${cfg.person}">${cfg.person.split(" ").pop().slice(0, 1)}</div>
             </div>
           </header>
@@ -582,12 +599,28 @@
       </div>
       <aside class="drawer" id="drawer">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <b>Notifikasi</b><button class="btn btn-sm btn-ghost" id="closeDrawer">Tutup</button>
+          <b>Notifikasi</b><button class="btn btn-sm btn-ghost" id="closeDrawer" type="button">Tutup</button>
         </div>
         ${notifs.map(([t, d]) => `<div class="notif"><b>${t}</b><div style="color:var(--muted);font-size:12px">${d}</div></div>`).join("")}
         <a class="btn btn-ghost" style="width:100%;margin-top:8px" href="#notifikasi">Lihat semua</a>
       </aside>`;
 
+    function setMenu(open) {
+      document.getElementById("sidebar").classList.toggle("open", open);
+      document.getElementById("sidebarOverlay").classList.toggle("open", open);
+      document.body.classList.toggle("nav-open", open);
+      document.getElementById("menuToggle").setAttribute("aria-expanded", open ? "true" : "false");
+      document.getElementById("menuToggle").setAttribute("aria-label", open ? "Tutup menu" : "Buka menu");
+      if (open) document.getElementById("drawer").classList.remove("open");
+    }
+    document.getElementById("menuToggle").onclick = () => {
+      setMenu(!document.getElementById("sidebar").classList.contains("open"));
+    };
+    document.getElementById("sidebarClose").onclick = () => setMenu(false);
+    document.getElementById("sidebarOverlay").onclick = () => setMenu(false);
+    document.getElementById("sidebar").querySelectorAll(".nav-item").forEach((el) => {
+      el.addEventListener("click", () => setMenu(false));
+    });
     document.getElementById("bellBtn").onclick = () => document.getElementById("drawer").classList.add("open");
     document.getElementById("closeDrawer").onclick = () => document.getElementById("drawer").classList.remove("open");
     root.querySelectorAll("[data-go]").forEach((el) => {
@@ -596,6 +629,15 @@
       };
     });
   }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    document.getElementById("sidebar")?.classList.remove("open");
+    document.getElementById("sidebarOverlay")?.classList.remove("open");
+    document.getElementById("drawer")?.classList.remove("open");
+    document.body.classList.remove("nav-open");
+    document.getElementById("menuToggle")?.setAttribute("aria-expanded", "false");
+  });
 
   window.addEventListener("hashchange", render);
   render();

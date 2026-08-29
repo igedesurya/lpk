@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a2856" />
   <title>Maritim Nusa Dewata International — Lembaga Kursus Hospitality & Maritim</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,7 +29,9 @@
       <div class="nav-cta">
         <a class="btn btn-ghost" href="daftar.html">Daftar</a>
         <a class="btn btn-white" href="login.html">Masuk Portal</a>
-        <button class="menu-btn" id="menuBtn" type="button">Menu</button>
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="mobilePanel">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
     <div class="wrap mobile-panel" id="mobilePanel">
@@ -36,7 +39,10 @@
       <a href="#portal">Portal SIM</a>
       <a href="#tentang">Tentang</a>
       <a href="#kontak">Kontak</a>
-      <a href="daftar.html">Daftar</a>
+      <div class="mobile-cta">
+        <a class="btn btn-ghost" href="daftar.html">Daftar</a>
+        <a class="btn btn-white" href="login.html">Masuk Portal</a>
+      </div>
     </div>
   </header>
 
@@ -235,7 +241,19 @@
   <script>
     const btn = document.getElementById("menuBtn");
     const panel = document.getElementById("mobilePanel");
-    btn.addEventListener("click", () => panel.classList.toggle("open"));
+    function setMenu(open) {
+      panel.classList.toggle("open", open);
+      document.body.classList.toggle("nav-open", open);
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      btn.setAttribute("aria-label", open ? "Tutup menu" : "Buka menu");
+    }
+    btn.addEventListener("click", () => setMenu(!panel.classList.contains("open")));
+    panel.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => setMenu(false));
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setMenu(false);
+    });
   </script>
 </body>
 </html>
